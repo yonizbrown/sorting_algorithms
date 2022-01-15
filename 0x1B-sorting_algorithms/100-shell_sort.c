@@ -1,46 +1,50 @@
 #include "sort.h"
+
 /**
-* shell_sort - function that sorts an array
-* of integers in ascending order using the
-* Shell sort algorithm
-*
-* @array: input arrray
-* @size: size of the array
-* Return: no return
-*/
+ * shell_sort - sort an array of integers in ascending order
+ * @array: array of integers
+ * @size: size of array of integers
+ */
 void shell_sort(int *array, size_t size)
 {
-size_t n = 1;
+	size_t gap;
 
-while (n < size)
-n = (n * 3) + 1;
+	if (size <= 1 || array == NULL)
+		return;
 
-while ((n = (n - 1) / 3) > 0)
-_ssort(array, size, n);
+	gap = 1;
+	while ((gap * 3 + 1) < size)
+		gap = gap * 3 + 1;
+
+	for (; gap > 0; gap /= 3)
+	{
+		insertion_sort(array, (int)size, (int)gap);
+		print_array(array, size);
+	}
 }
+
 /**
-* _ssort - auxiliar function for
-* shell_sort function
-* @a: input arrray
-* @size: size of the array
-* @n: intervale
-* Return: no return
-*/
-void _ssort(int *a, int size, int n)
+ * insertion_sort - sort an array of integers based on a gap for shell sort
+ * @array: array of integers
+ * @size: size of array of integers
+ * @diff: gap given by shell sort
+ */
+void insertion_sort(int *array, int size, int diff)
 {
-int tmp, i, j;
+	int i, j, hold;
 
-for (i = 0; (i + n) < size; i++)
-{
-for (j = i + n; (j - n) >= 0; j = j - n)
-{
-if (a[j] < a[j - n])
-{
-tmp = a[j];
-a[j] = a[j - n];
-a[j - n] = tmp;
-}
-}
-}
-print_array(a, size);
+	for (i = diff; i < size; i++)
+	{
+		for (j = i; j - diff >= 0; j -= diff)
+		{
+			if (array[j] < array[j - diff])
+			{
+				hold = array[j];
+				array[j] = array[j - diff];
+				array[j - diff] = hold;
+			}
+			else
+				break;
+		}
+	}
 }

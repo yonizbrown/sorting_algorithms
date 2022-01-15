@@ -1,47 +1,48 @@
 #include "sort.h"
-#include <stdio.h>
 
 /**
- * insertion_sort_list - sorts a DLL of integers in
- * ascending order using the insertion sort
- * algorithm
- *
+ * get_head - Get the head of a doubly linked list
+ * @tmp: node in linked list
+ * Return: head of linked list
+ */
+listint_t *get_head(listint_t *tmp)
+{
+	while (tmp->prev)
+		tmp = tmp->prev;
+
+	return (tmp);
+}
+
+/**
+ * insertion_sort_list - Sort a doubly linked list of integers
+ * in ascending order using insertion sort algorithm.
  * @list: doubly linked list
- * Return: no return
  */
 void insertion_sort_list(listint_t **list)
 {
-listint_t *ptr, *tmp;
+	listint_t *tmp, *hold, *ptmp;
 
-if (!list)
-return;
+	if (list == NULL)
+		return;
+	tmp = get_head(*list);
 
-ptr = *list;
-
-while (ptr)
-{
-while (ptr->next && (ptr->n > ptr->next->n))
-{
-tmp = ptr->next;
-ptr->next = tmp->next;
-tmp->prev = ptr->prev;
-
-if (ptr->prev)
-ptr->prev->next = tmp;
-
-if (tmp->next)
-tmp->next->prev = ptr;
-
-ptr->prev = tmp;
-tmp->next = ptr;
-
-if (tmp->prev)
-				ptr = tmp->prev;
-else
-*list = tmp;
-
-print_list(*list);
-}
-ptr = ptr->next;
-}
+	for (tmp = tmp->next; tmp;)
+	{
+		hold = tmp->next;
+		while (tmp->prev && tmp->n < tmp->prev->n)
+		{
+			ptmp = tmp->prev;
+			ptmp->next = tmp->next;
+			tmp->prev = ptmp->prev;
+			ptmp->prev = tmp;
+			tmp->next = ptmp;
+			if (ptmp->next)
+				ptmp->next->prev = ptmp;
+			if (tmp->prev)
+				tmp->prev->next = tmp;
+			print_list(get_head(*list));
+		}
+		tmp = hold;
+	}
+	*list = get_head(*list);
 }

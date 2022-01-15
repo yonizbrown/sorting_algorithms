@@ -1,52 +1,51 @@
 #include "sort.h"
 /**
-* counting_sort -Sorts an arrayof integers
-* in ascending order using the
-* Counting sort algorithm
-* @array: array
-* @size: size
-* Return: no return
-*/
+ * counting_sort - counting sort algo
+ * @array: array to sort
+ * @size: size of array
+ */
 void counting_sort(int *array, size_t size)
 {
-int n, i;
-int *buff, *a;
+	size_t i;
+	int j, k, num, dup;
+	int *counts;
 
-if (size < 2)
-return;
+	if (array == NULL || size < 2)
+		return;
+	k = array[0]; /* find max num to malloc size of new array */
+	for (i = 1; i < size; i++)
+	{
+		if (array[i] > k)
+			k = array[i];
+	}
+	counts = malloc(sizeof(int) * (k + 1));
+	if (counts == NULL)
+		return;
+	for (j = 0; j < (k + 1); j++) /* memset counts array to 0 */
+		counts[j] = 0;
+	for (i = 0; i < size; i++) /* input counts */
+	{
+		num = array[i];
+		counts[num] += 1;
+	}
+	for (j = 0; j < k; j++) /* update counts array */
+	{
+		counts[j + 1] += counts[j];
+	}
+	print_array(counts, k + 1);
+	for (i = 0, j = 0; j < k; j++) /* replace array with sorted */
+	{
+		if ((j == 0) && counts[j] != 0)
+		{
+			for ((dup = counts[j]); dup > 0; dup--)
+				array[i++] = j;
+		}
+		if (counts[j + 1] > counts[j])
+		{
+			for ((dup = counts[j + 1] - counts[j]); dup > 0; dup--)
+				array[i++] = (j + 1);
+		}
+	}
 
-for (n = i = 0; i < (int)size; i++)
-if (array[i] > n)
-n = array[i];
-
-buff = malloc(sizeof(int) * (n + 1));
-if (!buff)
-return;
-
-for (i = 0; i <= n; i++)
-buff[i] = 0;
-for (i = 0; i < (int)size; i++)
-buff[array[i]] += 1;
-for (i = 1; i <= n; i++)
-buff[i] += buff[i - 1];
-
-print_array(buff, (n + 1));
-a = malloc(sizeof(int) * (size + 1));
-
-if (!a)
-{
-free(buff);
-return;
-}
-for (i = 0; i < (int)size; i++)
-{
-a[buff[array[i]] - 1] = array[i];
-buff[array[i]] -= 1;
-}
-
-for (i = 0; i < (int)size; i++)
-array[i] = a[i];
-
-free(buff);
-free(a);
+	free(counts);
 }
